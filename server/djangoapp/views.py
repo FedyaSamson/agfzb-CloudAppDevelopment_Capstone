@@ -2,8 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
-# from .models import related models
-# from .restapis import related methods
+from django.urls import reverse
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
@@ -34,15 +34,37 @@ def contact(request):
 # Create a `login_request` view to handle sign in request
 # def login_request(request):
 # ...
+def login_request(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect(reverse('djangoapp:index'))
+        else:
+            return render(request, 'djangoapp/login.html', {'error_message': 'Invalid login'})
+    else:
+        return render(request, 'djangoapp/login.html')
 
 # Create a `logout_request` view to handle sign out request
 # def logout_request(request):
 # ...
-
+def logout_view(request):
+    logout(request)
+    return redirect(reverse('djangoapp:index'))
 # Create a `registration_request` view to handle sign up request
 # def registration_request(request):
 # ...
-
+def registration(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect(reverse('djangoapp:login_request'))
+    else:
+        form = UserCreationForm()
+    return render(request, 'djangoapp/registration.html', {'form': form})
 # Update the `get_dealerships` view to render the index page with a list of dealerships
 def get_dealerships(request):
     context = {}
