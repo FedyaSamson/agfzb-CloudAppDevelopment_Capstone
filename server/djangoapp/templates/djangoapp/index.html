@@ -1,7 +1,6 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    {% load static %}
     <meta charset="UTF-8">
     <title>Dealership Review</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
@@ -14,15 +13,17 @@
 
 </head>
 
-    <body>
-
-     <h1>This is the index page of your Django app!</h1> 
-    <!--Add a nav bar here -->
-    <nav class="navbar navbar-light bg-light">
+<body>
+<nav class="navbar navbar-light bg-light">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">Online Course</a>
+              <a class="navbar-brand" href="{% url 'djangoapp:about' %}">
+                    <button> About Page </button>
+                </a>
         </div>
+        </a>
+        Toader Samson First Aapp
+        </a>
         <ul class="nav navbar-nav navbar-right">
             {% if user.is_authenticated %}
             <li>
@@ -31,11 +32,10 @@
             </li>
             {% else %}
             <li>
-                <form class="form-inline" action="{% url 'djangoapp:login' %}" method="post">
-                    {% csrf_token %}
+                <form class="form-inline" action="{% url 'djangoapp:login' %}" method="post">                    {% csrf_token %}
                     <div class="input-group">
                         <input type="text" class="form-control" placeholder="Username" name="username" >
-                        <input type="password" class="form-control" placeholder="Password" name="password" >
+                        <input type="password" class="form-control" placeholder="Password" name="psw" >
                         <button class="btn btn-primary" type="submit">Login</button>
                         <a class="btn btn-link" href="{% url 'djangoapp:registration' %}">Sign Up</a>
                     </div>
@@ -45,8 +45,55 @@
         </ul>
     </div>
 </nav>
-    <!--Add a dealer table here -->
 
-    </body>
+<div class="container-fluid">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-warning" role="alert">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <table class="table" id="table"
+        data-filter-control="true">
+        <thead>
+            <tr>
+                <th data-field="id">ID</th>
+                <th data-field="full_name">Dealer Name</th>
+                <th data-field="city">City</th>
+                <th data-field="address">Address</th>
+                <th data-field="zip">Zip</th>
+                <th data-field="state" data-filter-control="select">State</th>
+            </tr>
+        </thead>
+         <tbody>
+            {% for dealer in dealership_list %}
+                <tr>
+                    <td>{{dealer.id}}</td>
+                    <td><a href="{% url 'djangoapp:dealer_details' dealer.id %}">{{dealer.full_name}}</a></td>   
+                    <td>{{dealer.city}}</td>
+                    <td>{{dealer.address}}</td>
+                    <td>{{dealer.zip}}</td>
+                    <td>{{dealer.st}}</td>
+                </tr>
+            {% endfor %}
+         </tbody>
+    </table>
+    </div>
+    <footer class="fixed-bottom">
+          <div class="container-fluid">
+            <a href="{% url 'djangoapp:contact' %}">
+                <button> Contact Page </button>
+            </a>
+          </div>
+    </footer>
+</div>
+</body>
+
+
+<script>
+  $(function() {
+    $('#table').bootstrapTable()
+  })
+</script>
 
 </html>
